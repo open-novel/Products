@@ -26,7 +26,7 @@ async function onp ( e ) {
 	let url = e.target.getAttribute( 'href' )
 	if ( ! url ) return
 
-	let address = e.target.dataset.onpURL || 'https://open-novel.github.io'
+	let address = e.target.dataset.onpURL || 'https://open-novel.github.io/#install'
 
 	let player = window.open( address )
 

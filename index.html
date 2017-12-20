@@ -25,7 +25,7 @@ window.addEventListener( 'DOMContentLoaded', ( ) => {
 			link.className = 'onp'
 			link.textContent = name
 			if ( location.hostname == '127.0.0.1' || location.hostname == '192.168.11.2' )
-				link.dataset.onpURL = `http://${ location.host }/プレイヤー/スタート.html`
+				link.dataset.onpURL = `http://${ location.host }/プレイヤー/スタート.html#install`
 			target.appendChild( link )
 			target.appendChild( new Text( '　　　' ) )
 		} )
