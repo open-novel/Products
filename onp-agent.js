@@ -30,9 +30,13 @@ async function onp ( e ) {
 
 	let player = window.open( address )
 
-	let buf = await ( await fetch( url ) ).arrayBuffer( )
+	player.onload = async ( ) => {
 
-	player.postMessage( { type: 'install-packed', version: '1.1', file: buf }, '*', [ buf ] )
+		let buf = await ( await fetch( url ) ).arrayBuffer( )
+
+		player.postMessage( { type: 'install-packed', version: '1.0', file: buf }, '*', [ buf ] )
+
+	}
 
 }
 
