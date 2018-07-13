@@ -26,17 +26,19 @@ async function onp ( e ) {
 	let url = e.target.getAttribute( 'href' )
 	if ( ! url ) return
 
+	let p = new Promise( ok => {
+		window.addEventListener( 'message', e => e.source == player && ok( ) )
+	} )
+
 	let address = e.target.dataset.onpURL || 'https://open-novel.github.io/#install'
 
 	let player = window.open( address )
 
-	player.onload = async ( ) => {
+	let buf = await ( await fetch( url ) ).arrayBuffer( )
 
-		let buf = await ( await fetch( url ) ).arrayBuffer( )
+	await p
 
-		player.postMessage( { type: 'install-packed', version: '1.0', file: buf }, '*', [ buf ] )
-
-	}
+	player.postMessage( { type: 'install-packed', version: '2.0', file: buf }, '*', [ buf ] )
 
 }
 
