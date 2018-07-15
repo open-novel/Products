@@ -38,7 +38,7 @@ async function onp ( e ) {
 
 	await p
 
-	player.postMessage( { type: 'install-packed', version: '2.0', file: buf }, '*', [ buf ] )
+	player.postMessage( { type: 'install-packed', version: '2.1', file: buf }, '*' )
 
 }
 
