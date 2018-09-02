@@ -24,8 +24,8 @@ async function onp ( e ) {
 	e.stopPropagation( )
 
 	let url = e.target.getAttribute( 'href' )
-	url = url.trim( )
 	if ( ! url ) return
+	url = new URL( url, location.href ).href
 
 	let p = new Promise( ok => {
 		window.addEventListener( 'message', e => e.source == player && ok( ) )
@@ -49,7 +49,7 @@ async function onp ( e ) {
 	let channel = new MessageChannel
 	channel.port1.start( )
 
-	player.postMessage( { type, version: '3.3', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+	player.postMessage( { type, version: '3.4', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
 		let path = e.data.path.trim( )
