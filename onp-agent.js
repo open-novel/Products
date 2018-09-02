@@ -48,7 +48,7 @@ async function onp ( e ) {
 
 	let channel =  new MessageChannel
 
-	player.postMessage( { type, version: '3.0', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+	player.postMessage( { type, version: '3.1', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
 		let path = e.data.path.trim( )
@@ -59,7 +59,7 @@ async function onp ( e ) {
 			file = await ( await fetch( new URL( path, url ) ) ).blob( )
 		} catch ( e ) { }
 
-		channel.port2.postMessage( { path, file }, '*' )
+		channel.port2.postMessage( { path, file } )
 
 	} )
 
