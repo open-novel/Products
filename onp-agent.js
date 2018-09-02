@@ -24,6 +24,7 @@ async function onp ( e ) {
 	e.stopPropagation( )
 
 	let url = e.target.getAttribute( 'href' )
+	url = url.trim( )
 	if ( ! url ) return
 
 	let p = new Promise( ok => {
@@ -34,11 +35,33 @@ async function onp ( e ) {
 
 	let player = window.open( address )
 
-	let buf = await ( await fetch( url ) ).arrayBuffer( )
+	let type = url.match( /\.zip$/i ) ? 'install-packed' : 'install-folder'
+
+	let buf = null, title = null
+	if ( type == 'install-packed' ) buf = await ( await fetch( url ) ).arrayBuffer( )
+	else {
+		if ( url[ url.length - 1 ] != '/' ) url += '/'
+		title = url.match( /([^/]+)\/$/ ) [ 1 ]
+	}
 
 	await p
 
-	player.postMessage( { type: 'install-packed', version: '2.1', file: buf }, '*' )
+	let channel =  new MessageChannel
+
+	player.postMessage( { type, version: '3.0', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+
+	channel.port1.addEventListener( 'message', async e => {
+		let path = e.data.path.trim( )
+		if( path.match( /^\/|\.\/|\/$/ ) ) return
+
+		let file = null
+		try {
+			file = await ( await fetch( new URL( path, url ) ) ).blob( )
+		} catch ( e ) { }
+
+		channel.port2.postMessage( { path, file }, '*' )
+
+	} )
 
 }
 
