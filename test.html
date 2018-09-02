@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--
+These codes are licensed under CC0.
+http://creativecommons.org/publicdomain/zero/1.0
+-->
+<meta charset="UTF-8">
+
+<script src="./onp-agent.js"></script>
+
+<script>
+
+window.addEventListener( 'DOMContentLoaded', ( ) => {
+
+	let target = document.querySelector( '#onp_products' )
+
+	const products = [
+		[ 'あかね改', 'ねぇさとるくん' ], [ 'openメモリアル', '滅亡のバレンタイン' ],
+		[  '女の子に告白', '女の子に告白2' ], [ 'デモ・基本', 'デモ・フラグ' ]
+	]
+
+	products.forEach( ary => {
+		ary.forEach( name => {
+			let link = document.createElement( 'a' )
+			link.href = `./${ name }`
+			link.className = 'onp'
+			link.textContent = name
+			if ( location.hostname == '127.0.0.1' || location.hostname == '192.168.11.2' )
+				link.dataset.onpURL = `http://${ location.host }/プレイヤー/スタート.html#install`
+			target.appendChild( link )
+			target.appendChild( new Text( '　　　' ) )
+		} )
+		target.appendChild( document.createElement( 'br' ) )
+	} )
+
+} )
+
+</script>
+<br><div id=onp_products style="font-size: 2rem">
+【クリックで作品インストール】<br>
+
+
+</div>
