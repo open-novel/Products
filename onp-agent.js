@@ -49,16 +49,27 @@ async function onp ( e ) {
 	let channel = new MessageChannel
 	channel.port1.start( )
 
-	player.postMessage( { type, version: '3.4', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+	player.postMessage( { type, version: '3.5', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
 		let path = e.data.path.trim( )
+		let exts = e.data.extensions
+
 		if( path.match( /^\/|\.\/|\/$/ ) ) return
 
 		let file = null
-		try {
-			file = await ( await fetch( new URL( path, url ) ) ).blob( )
-		} catch ( e ) { }
+		async function fetchFile( ext ) {
+			let file = null
+			try {
+				file = await ( await fetch( new URL( path, url ).href + '.' + ext ) ).blob( )
+			} catch( e ) { }
+			return file
+		}
+
+		for ( let ext of exts ) {
+			file = await fetchFile( ext )
+			if ( file ) break
+		}
 
 		channel.port1.postMessage( { path, file } )
 
