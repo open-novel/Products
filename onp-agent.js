@@ -38,8 +38,10 @@ async function onp ( e ) {
 	let type = url.match( /\.zip$/i ) ? 'install-packed' : 'install-folder'
 
 	let buf = null, title = null
-	if ( type == 'install-packed' ) buf = await ( await fetch( url ) ).arrayBuffer( )
-	else {
+	if ( type == 'install-packed' ) {
+		let res = await fetch( url )
+		if ( res.ok )buf = await res.arrayBuffer( )
+	} else {
 		if ( url[ url.length - 1 ] != '/' ) url += '/'
 		title = url.match( /([^/]+)\/$/ ) [ 1 ]
 	}
@@ -49,7 +51,7 @@ async function onp ( e ) {
 	let channel = new MessageChannel
 	channel.port1.start( )
 
-	player.postMessage( { type, version: '3.5', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+	player.postMessage( { type, version: '3.6', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
 		let path = e.data.path.trim( )
@@ -61,7 +63,8 @@ async function onp ( e ) {
 		async function fetchFile( ext ) {
 			let file = null
 			try {
-				file = await ( await fetch( new URL( path, url ).href + '.' + ext ) ).blob( )
+				let res = await fetch( new URL( path, url ).href + '.' + ext )
+				if ( res.ok ) file = await res.blob( )
 			} catch( e ) { }
 			return file
 		}
