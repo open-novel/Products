@@ -51,7 +51,7 @@ async function onp ( e ) {
 	let channel = new MessageChannel
 	channel.port1.start( )
 
-	player.postMessage( { type, version: '3.6', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+	player.postMessage( { type, version: '4.0', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
 		let path = e.data.path.trim( )
