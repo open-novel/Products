@@ -15,7 +15,7 @@ window.addEventListener( 'DOMContentLoaded', ( ) => {
 
 	const products = [
 		[ 'あかね改', 'ねぇさとるくん' ], [ 'openメモリアル', '滅亡のバレンタイン' ],
-		[  '女の子に告白', '女の子に告白2' ], [ 'デモ・基本', 'デモ・フラグ' ], [ 'ダイジェストＲ１８' ]
+		[  '女の子に告白', '女の子に告白2' ], [ 'デモ・基本', 'デモ・フラグ' ]
 	]
 
 	products.forEach( ary => {
@@ -24,8 +24,6 @@ window.addEventListener( 'DOMContentLoaded', ( ) => {
 			link.href = `./${ name }.zip`
 			link.className = 'onp'
 			link.textContent = name
-			if ( location.hostname == '127.0.0.1' || location.hostname == '192.168.11.2' )
-				link.dataset.onpURL = `http://${ location.host }/プレイヤー/スタート.html#install`
 			target.appendChild( link )
 			target.appendChild( new Text( '　　　' ) )
 		} )
