@@ -14,18 +14,16 @@ window.addEventListener( 'DOMContentLoaded', ( ) => {
 	let target = document.querySelector( '#onp_products' )
 
 	const products = [
-		[ 'ダイジェストＲ１８' ]
+		[ 'ダイジェストＲ１８', '🔞 　ダイジェストＲ１８' ]
 	]
 
 	products.forEach( ary => {
-		ary.forEach( name => {
-			let link = document.createElement( 'a' )
-			link.href = `./${ name }`
-			link.className = 'onp'
-			link.textContent = name
-			target.appendChild( link )
-			target.appendChild( new Text( '　　　' ) )
-		} )
+		let link = document.createElement( 'a' )
+		link.href = `./${ ary[ 0 ] }`
+		link.className = 'onp'
+		link.textContent = ary[ 1 ]
+		target.appendChild( link )
+		target.appendChild( new Text( '　　　' ) )
 		target.appendChild( document.createElement( 'br' ) )
 	} )
 
