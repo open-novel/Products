@@ -11,14 +11,25 @@ window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 function init ( ) {
 
 	let elms = Array.from( document.getElementsByClassName( 'onp' ) )
-
 	elms.forEach( e => { e.addEventListener( 'click', onp ) } )
+
+	if ( ! window.opener ) return
+
+	let titleList = Array.from( elms, e => e.innerText )
+
+	let channel = new MessageChannel
+	channel.port1.start( )
+	window.opener.postMessage( { type: 'install-list', list: titleList, version: '5.0', url: location.href }, '*', [ channel.port2 ] )
+
+	channel.port1.addEventListener( 'message', async e => {
+		onp ( elms[ e.data.selectedIndex ], window.opener )
+	} )
 
 }
 
 
 
-async function onp ( e ) {
+async function onp ( e, player, channel ) {
 
 	e.preventDefault( )
 	e.stopPropagation( )
@@ -27,13 +38,15 @@ async function onp ( e ) {
 	if ( ! url ) return
 	url = new URL( url, location.href ).href
 
-	let p = new Promise( ok => {
-		window.addEventListener( 'message', e => e.source == player && ok( ) )
-	} )
+	let p
+	if ( ! player ) {
+		p = new Promise( ok => {
+			window.addEventListener( 'message', e => e.source == player && ok( ) )
+		} )
 
-	let address = e.target.dataset.onpURL || 'https://open-novel.github.io/#install'
-
-	let player = window.open( address )
+		let address = e.target.dataset.onpURL || 'https://open-novel.github.io/#install'
+		player = window.open( address )
+	}
 
 	let type = url.match( /\.zip$/i ) ? 'install-packed' : 'install-folder'
 
@@ -46,12 +59,17 @@ async function onp ( e ) {
 		title = url.match( /([^/]+)\/$/ ) [ 1 ]
 	}
 
-	await p
+	if ( ! channel ) {
 
-	let channel = new MessageChannel
-	channel.port1.start( )
+		await p
 
-	player.postMessage( { type, version: '4.0', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+		channel = new MessageChannel
+		channel.port1.start( )
+	}
+
+	player.postMessage( { type, version: '5.0', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+
+
 
 	channel.port1.addEventListener( 'message', async e => {
 		let path = e.data.path.trim( )
