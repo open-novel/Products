@@ -20,7 +20,7 @@ function init ( ) {
 
 	let channel = new MessageChannel
 	channel.port1.start( )
-	player.postMessage( { type: 'install-list', list: titleList, version: '5.1', url: location.href }, '*', [ channel.port2 ] )
+	player.postMessage( { type: 'install-list', list: titleList, version: '5.2', url: location.href }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async evt => {
 		let e = { target: elms[ evt.data.selectedIndex ] }
@@ -67,7 +67,7 @@ async function onp ( e, player ) {
 	channel.port1.start( )
 
 
-	player.postMessage( { type, version: '5.1', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
+	player.postMessage( { type, version: '5.2', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 
 
