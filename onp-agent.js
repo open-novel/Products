@@ -13,8 +13,8 @@ function init ( ) {
 	let elms = Array.from( document.getElementsByClassName( 'onp' ) )
 	elms.forEach( e => { e.addEventListener( 'click', onp ) } )
 
-	if ( ! window.opener ) return
-	let player = window.opener
+	if ( ! window.parent ) return
+	let player = window.parent
 
 	let titleList = Array.from( elms, e => e.innerText )
 
