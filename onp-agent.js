@@ -24,14 +24,14 @@ function init ( ) {
 
 	channel.port1.addEventListener( 'message', async evt => {
 		let e = { target: elms[ evt.data.selectedIndex ] }
-		onp ( e, player, channel )
+		onp ( e, player )
 	} )
 
 }
 
 
 
-async function onp ( e, player, channel ) {
+async function onp ( e, player ) {
 
 	e.preventDefault && e.preventDefault( )
 	e.stopPropagation && e.stopPropagation( )
@@ -61,13 +61,11 @@ async function onp ( e, player, channel ) {
 		title = url.match( /([^/]+)\/$/ ) [ 1 ]
 	}
 
-	if ( ! channel ) {
+	await p
 
-		await p
+	let channel = new MessageChannel
+	channel.port1.start( )
 
-		channel = new MessageChannel
-		channel.port1.start( )
-	}
 
 	player.postMessage( { type, version: '5.1', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
