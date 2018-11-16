@@ -14,15 +14,16 @@ function init ( ) {
 	elms.forEach( e => { e.addEventListener( 'click', onp ) } )
 
 	if ( ! window.opener ) return
+	let player = window.opener
 
 	let titleList = Array.from( elms, e => e.innerText )
 
 	let channel = new MessageChannel
 	channel.port1.start( )
-	window.opener.postMessage( { type: 'install-list', list: titleList, version: '5.0', url: location.href }, '*', [ channel.port2 ] )
+	player.postMessage( { type: 'install-list', list: titleList, version: '5.0', url: location.href }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
-		onp ( elms[ e.data.selectedIndex ], window.opener )
+		onp ( elms[ e.data.selectedIndex ], player, channel )
 	} )
 
 }
