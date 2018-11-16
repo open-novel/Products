@@ -22,8 +22,8 @@ function init ( ) {
 	channel.port1.start( )
 	player.postMessage( { type: 'install-list', list: titleList, version: '5.1', url: location.href }, '*', [ channel.port2 ] )
 
-	channel.port1.addEventListener( 'message', async elm => {
-		let e = { target: elms[ e.data.selectedIndex ] }
+	channel.port1.addEventListener( 'message', async evt => {
+		let e = { target: elms[ evt.data.selectedIndex ] }
 		onp ( e, player, channel )
 	} )
 
