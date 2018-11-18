@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.4'
+const version = '5.5'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
@@ -24,17 +24,17 @@ function init ( ) {
 	channel.port1.start( )
 	player.postMessage( { type: 'install-list', list: titleList, version, url: location.href }, '*', [ channel.port2 ] )
 
-	channel.port1.addEventListener( 'message', async evt => {
-		let e = { target: elms[ evt.data.index ] }
-		switch ( evt.data.type ) {
+	channel.port1.addEventListener( 'message', async ( { data } ) => {
+		let elm =elms[ data.index ]
+		switch ( data.type ) {
 			case 'select': {
-				onp( e, player )
+				onp(  { target: elm }, player )
 			} break
 			case 'getFile': {
-				let url = e.target.getAttribute( 'href' )
+				let url = elm.getAttribute( 'href' )
 				if ( ! url ) return
 				url = new URL( url, location.href ).href
-				sendFile( e.data, url, channel.port1 )
+				sendFile( data, url, channel.port1 )
 			}
 		}
 	} )
@@ -42,12 +42,12 @@ function init ( ) {
 
 
 
-async function onp ( e, player ) {
+async function onp ( evt, player ) {
 
-	e.preventDefault && e.preventDefault( )
-	e.stopPropagation && e.stopPropagation( )
+	evt.preventDefault && evt.preventDefault( )
+	evt.stopPropagation && evt.stopPropagation( )
 
-	let url = e.target.getAttribute( 'href' )
+	let url = evt.target.getAttribute( 'href' )
 	if ( ! url ) return
 	url = new URL( url, location.href ).href
 
@@ -57,7 +57,7 @@ async function onp ( e, player ) {
 			window.addEventListener( 'message', e => e.source == player && ok( ) )
 		} )
 
-		let address = e.target.dataset.onpURL || 'https://open-novel.github.io/#install'
+		let address = evt.target.dataset.onpURL || 'https://open-novel.github.io/#install'
 		player = window.open( address )
 	}
 
