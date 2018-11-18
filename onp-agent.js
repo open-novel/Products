@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.3'
+const version = '5.4'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
@@ -31,12 +31,10 @@ function init ( ) {
 				onp( e, player )
 			} break
 			case 'getFile': {
-				elms.forEach( e => {
-					let url = e.target.getAttribute( 'href' )
-					if ( ! url ) return
-					url = new URL( url, location.href ).href
-					sendFile( e.data, url, channel.port1 )
-				} )
+				let url = e.target.getAttribute( 'href' )
+				if ( ! url ) return
+				url = new URL( url, location.href ).href
+				sendFile( e.data, url, channel.port1 )
 			}
 		}
 	} )
