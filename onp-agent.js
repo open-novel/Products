@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.8'
+const version = '5.9'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
@@ -23,7 +23,10 @@ function init ( ) {
 		if ( ! url ) return { }
 		url = new URL( url, location.href ).href
 		if ( ! url.match( /\.zip$/i ) && url[ url.length - 1 ] != '/' ) url += '/'
-		let title = url.match( /([^/]+)(\/|.zip)$/i ) [ 1 ]
+		let title = window.decodeURIComponent(
+			( url.match( /([^/]+)(\/|.zip)$/i ) || [ , null ] ) [ 1 ]
+		)
+		if ( ! title ) return { }
 		return { title, url }
 	} )
 
