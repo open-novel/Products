@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.5'
+const version = '5.6'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
@@ -34,7 +34,9 @@ function init ( ) {
 				let url = elm.getAttribute( 'href' )
 				if ( ! url ) return
 				url = new URL( url, location.href ).href
-				sendFile( data, url, channel.port1 )
+				if ( url.match( /\.zip$/i ) ) return
+				let obj = await getFile( data, url )
+				channel.port1.postMessage( { type: 'install-file', version, index: data.index, ...obj } )
 			}
 		}
 	} )
@@ -81,14 +83,16 @@ async function onp ( evt, player ) {
 	player.postMessage( { type, version, url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
-		sendFile( e.data, url, channel.port1 )
+		let obj = await getFile( e.data, url )
+		channel.port1.postMessage( { type: 'install-file', version, ...obj } )
 	} )
 }
 
 
-async function sendFile ( data, url, port ) {
+async function getFile ( data, url ) {
 
-	if ( data.type != 'getFile' ) return
+	if (data.type != 'getFile' ) return
+
 	let path = data.path.trim( )
 	let exts = data.extensions
 
@@ -109,8 +113,7 @@ async function sendFile ( data, url, port ) {
 		if ( file ) break
 	}
 
-	port.postMessage( { type: 'install-file', version, path, file } )
-
+	return { path, file }
 }
 
 
