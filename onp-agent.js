@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.7'
+const version = '5.8'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
@@ -18,22 +18,29 @@ function init ( ) {
 	if ( ! window.parent ) return
 	let player = window.parent
 
-	let titleList = Array.from( elms, e => e.innerText )
+	let titleList = Array.from( elms, elm => {
+		let url = elm.getAttribute( 'href' )
+		if ( ! url ) return { }
+		url = new URL( url, location.href ).href
+		if ( ! url.match( /\.zip$/i ) && url[ url.length - 1 ] != '/' ) url += '/'
+		let title = url.match( /([^/]+)(\/|.zip)$/i ) [ 1 ]
+		return { title, url }
+	} )
 
 	let channel = new MessageChannel
 	channel.port1.start( )
 	player.postMessage( { type: 'install-list', list: titleList, version, url: location.href }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async ( { data } ) => {
-		let elm =elms[ data.index ]
+
 		switch ( data.type ) {
 			case 'select': {
+				let elm = elms[ data.index ]
 				onp(  { target: elm }, player )
 			} break
 			case 'getFile': {
-				let url = elm.getAttribute( 'href' )
+				let url = titleList[ data.index ].url
 				if ( ! url ) return
-				url = new URL( url, location.href ).href
 				let obj = { file: null }
 				if ( ! url.match( /\.zip$/i ) ) obj = await getFile( data, url )
 				channel.port1.postMessage( { type: 'install-file', version, index: data.index, ...obj } )
