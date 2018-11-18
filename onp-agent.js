@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.9'
+const version = '6.0'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
