@@ -5,6 +5,8 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
+const version = '5.3'
+
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
 
@@ -20,13 +22,24 @@ function init ( ) {
 
 	let channel = new MessageChannel
 	channel.port1.start( )
-	player.postMessage( { type: 'install-list', list: titleList, version: '5.2', url: location.href }, '*', [ channel.port2 ] )
+	player.postMessage( { type: 'install-list', list: titleList, version, url: location.href }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async evt => {
-		let e = { target: elms[ evt.data.selectedIndex ] }
-		onp ( e, player )
+		let e = { target: elms[ evt.data.index ] }
+		switch ( evt.data.type ) {
+			case 'select': {
+				onp( e, player )
+			} break
+			case 'getFile': {
+				elms.forEach( e => {
+					let url = e.target.getAttribute( 'href' )
+					if ( ! url ) return
+					url = new URL( url, location.href ).href
+					sendFile( e.data, url, channel.port1 )
+				} )
+			}
+		}
 	} )
-
 }
 
 
@@ -67,34 +80,38 @@ async function onp ( e, player ) {
 	channel.port1.start( )
 
 
-	player.postMessage( { type, version: '5.2', url: location.href, title, file: buf }, '*', [ channel.port2 ] )
-
-
+	player.postMessage( { type, version, url: location.href, title, file: buf }, '*', [ channel.port2 ] )
 
 	channel.port1.addEventListener( 'message', async e => {
-		let path = e.data.path.trim( )
-		let exts = e.data.extensions
-
-		if( path.match( /^\/|\.\/|\/$/ ) ) return
-
-		let file = null
-		async function fetchFile( ext ) {
-			let file = null
-			try {
-				let res = await fetch( new URL( path, url ).href + '.' + ext )
-				if ( res.ok ) file = await res.blob( )
-			} catch( e ) { }
-			return file
-		}
-
-		for ( let ext of exts ) {
-			file = await fetchFile( ext )
-			if ( file ) break
-		}
-
-		channel.port1.postMessage( { path, file } )
-
+		sendFile( e.data, url, channel.port1 )
 	} )
+}
+
+
+async function sendFile ( data, url, port ) {
+
+	if ( data.type != 'getFile' ) return
+	let path = data.path.trim( )
+	let exts = data.extensions
+
+	if( path.match( /(^\/)|(\.\/)|(\/$)|[:]/ ) ) return
+
+	let file = null
+	async function fetchFile( ext ) {
+		let file = null
+		try {
+			let res = await fetch( new URL( path, url ).href + '.' + ext )
+			if ( res.ok ) file = await res.blob( )
+		} catch( e ) { }
+		return file
+	}
+
+	for ( let ext of exts ) {
+		file = await fetchFile( ext )
+		if ( file ) break
+	}
+
+	port.postMessage( { type: 'install-file', version, path, file } )
 
 }
 
