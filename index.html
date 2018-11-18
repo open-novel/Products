@@ -21,7 +21,7 @@ window.addEventListener( 'DOMContentLoaded', ( ) => {
 	products.forEach( ary => {
 		ary.forEach( name => {
 			let link = document.createElement( 'a' )
-			link.href = `./${ name }.zip`
+			link.href = `${ name }`
 			link.className = 'onp'
 			link.textContent = name
 			target.appendChild( link )
