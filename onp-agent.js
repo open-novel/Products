@@ -5,7 +5,7 @@ http://creativecommons.org/publicdomain/zero/1.0
 
 {
 
-const version = '5.6'
+const version = '5.7'
 
 window.addEventListener( 'DOMContentLoaded', ( ) => setTimeout( init, 1 ) )
 
@@ -34,8 +34,8 @@ function init ( ) {
 				let url = elm.getAttribute( 'href' )
 				if ( ! url ) return
 				url = new URL( url, location.href ).href
-				if ( url.match( /\.zip$/i ) ) return
-				let obj = await getFile( data, url )
+				let obj = { file: null }
+				if ( ! url.match( /\.zip$/i ) ) obj = await getFile( data, url )
 				channel.port1.postMessage( { type: 'install-file', version, index: data.index, ...obj } )
 			}
 		}
