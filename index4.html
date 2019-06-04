@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+These codes are licensed under CC0.
+http://creativecommons.org/publicdomain/zero/1.0
+-->
+<meta charset="UTF-8">
+
+<script src="./onp-agent.js"></script>
+
+<script>
+
+window.addEventListener( 'DOMContentLoaded', ( ) => {
+
+	let target = document.querySelector( '#onp_products' )
+
+	const products = [
+		[ '001', ],
+	]
+
+	products.forEach( ary => {
+		ary.forEach( name => {
+			let link = document.createElement( 'a' )
+			link.href = `公式作品/${ name }`
+			link.className = 'onp'
+			link.textContent = name
+			target.appendChild( link )
+			target.appendChild( new Text( '　　　' ) )
+		} )
+		target.appendChild( document.createElement( 'br' ) )
+	} )
+
+} )
+
+</script>
+<br><div id=onp_products style="font-size: 2rem">
+【クリックで作品インストール】<br>
+
+
+</div>
